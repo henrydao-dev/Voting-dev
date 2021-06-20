@@ -3,12 +3,10 @@
 public class Candidate
 {
     /*
-    private String name
-Candidate's name (used only in toString)
+    private String name Candidate's name (used only in toString)
 
-
-private int candidateID
-unique ID for candidate
+    private int candidateID;
+    // unique ID for candidate
 Used by voters. txt, so should not change
 private String office
 office the candidate is running for
@@ -44,5 +42,5 @@ Outputs a text-friendly string
     
     
     
-    /*
+    */
 }
