@@ -13,21 +13,23 @@ import java.util.ArrayList;
 public class Report {
 	
 	ArrayList<Candidate> ballot = new ArrayList<Candidate>();	// Holds all the Candidate information relevant to the given electionID
-	private int[] votes;										// Holds all of the votes for the candidates on the ballot
-	private int electionID;										// Used to find the correct ####votes.txt file and in reporting the name of the election
-	private int numVoters;										// Used to report how many registered voters there are
-	private int voteCount;										// Used to report the numbers of votes placed in the given election
-	private int candidates;										// Used in calculating percentages of votes
+	private int[] votes;						// Holds all of the votes for the candidates on the ballot
+	private int electionID;						// Used to find the correct ####votes.txt file and in reporting the name of the election
+	private int numVoters;						// Used to report how many registered voters there are
+	private int voteCount;						// Used to report the numbers of votes placed in the given election
+	private int candidates;						// Used in calculating percentages of votes
 	
-	public Report() {
-		// default constructor not used
-	}
+	// default constructor not used
+	public Report() {}
 	
+	/*
+	 * argument constructor used in setting/initializing the values of all the variables for the object
+	 */
 	public Report(int electionID, int numVoters, ArrayList<Candidate> ballot) {
 		this.ballot = ballot;
 		this.electionID = electionID;
 		this.numVoters = numVoters;
-		// count the number of candidates on ballot and update candidates
+		candidates = ballot.size();
 		votes = new int[candidates];
 		for (int i = 0; i < candidates; i++) {
 			votes[i] = 0;
@@ -46,9 +48,15 @@ public class Report {
 	}
 	
 	@SuppressWarnings("unused")
-	private int calcPercentage() {
-		// does the required math to figure out the percentages of votes to each candidate
-		return 0;
+	/*
+	 *  does the required math to figure out the percentages of votes to each candidate
+	 */
+	private double[] calcPercentage() {
+		double[] count = new double[candidates];
+		for(int i = 0; i < candidates; i++) {
+			count[i] = 100 * (votes[i] / numVoters);
+		}
+		return count;
 	}
 
 	/***************************************************
