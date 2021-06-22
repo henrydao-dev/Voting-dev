@@ -1,5 +1,5 @@
 // DB.java
-// @author Douglas Kiang
+// @authors Douglas Kiang,
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 
 public class DB
 {
+    private File[] ballotNames;
     private ArrayList<Voter> voters;
     int numVoters;
     private int elections;
@@ -21,6 +22,7 @@ public class DB
     public DB()
     {
         elections = countBallots();
+        print(ballotNames);
         votes = new ArrayList<HashMap>();
         loadBallots();
     }
@@ -60,7 +62,7 @@ public class DB
                 b.put("CandidateOffice", values.get(3));
                 votes.add(b);
             }
-            print(votes);
+            //print(votes);
         }
         catch (FileNotFoundException e)
         {
@@ -88,7 +90,8 @@ public class DB
         };
         try {
             // Finds number of ballot.txt files in current directory
-            output = currentDir.listFiles(filter).length;
+            ballotNames = currentDir.listFiles(filter);
+            output = ballotNames.length;
         }
         catch (NullPointerException e) {
             System.out.println("No ####ballot.txt files found.");
@@ -129,6 +132,15 @@ public class DB
                 System.out.println("key: " + i + " value: " + h.get(i));
             }
             System.out.println();
+        }
+    }
+    
+    private void print(File[] files)
+    {
+        for (File f : files)
+        {
+            // Print File
+            System.out.println(f);
         }
     }
 }
