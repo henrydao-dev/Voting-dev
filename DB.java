@@ -11,20 +11,22 @@ import java.io.FileNotFoundException;
 
 public class DB
 {
+    private File[] ballotNames;
     private ArrayList<Voter> voters;
     int numVoters;
     private int elections;
     private int[] electionIDs;
     private ArrayList<HashMap> votes;
     Scanner sn;
-    
+
     public DB()
     {
-        elections = countBallots();
+        elections = countBallots(); // Gets number of ballot text files
+        print(ballotNames); // Testing line
         votes = new ArrayList<HashMap>();
         loadBallots();
     }
-    
+
     // Fills the voters ArrayList with voters read in from voters.txt
     private void loadVoters()
     {
@@ -42,42 +44,47 @@ public class DB
             System.out.println("File not found! Make sure that voters.txt is in the same folder as the class.");
         }
     }
-    
-    // Fills the 
+
+    // Fills the
     private void loadBallots()
     {
-        try
+        // For each ballot file in directory
+        for (int i = 0; i < elections; i++)
         {
-            // ultimately this will need to be a concatenated string with the year
-            sn = new Scanner(new File("2020ballot.txt"));
-            while (sn.hasNextLine())
+            try
             {
-                ArrayList<String> values = getRecordFromLine(sn.nextLine());
-                HashMap<String, String> b = new HashMap<String, String>();
-                b.put("CandidateFirstName", values.get(0));
-                b.put("CandidateLastName", values.get(1));
-                b.put("CandidateID", values.get(2));
-                b.put("CandidateOffice", values.get(3));
-                votes.add(b);
+                // Scan through the ballot
+                sn = new Scanner(ballotNames[i]);
+                // Construct a hashmap of each candidate in the ballot
+                while (sn.hasNextLine())
+                {
+                    ArrayList<String> values = getRecordFromLine(sn.nextLine());
+                    HashMap<String, String> b = new HashMap<String, String>();
+                    b.put("CandidateFirstName", values.get(0));
+                    b.put("CandidateLastName", values.get(1));
+                    b.put("CandidateID", values.get(2));
+                    b.put("CandidateOffice", values.get(3));
+                    votes.add(b); // Add the hashmap to the votes ArrayList
+                }
+                print(votes);
             }
-            print(votes);
-        }
-        catch (FileNotFoundException e)
-        {
-            System.out.println("File not found! Make sure that ballot.txt is in the same folder as the class.");
+            catch (FileNotFoundException e)
+            {
+                System.out.println("File not found! Make sure that ballot.txt is in the same folder as the class.");
+            }
         }
     }
-    
+
     public void addVoter(Voter v)
     {
         voters.add(v);
     }
-    
+
     // Returns the number of files in the current directory that
     // end in "ballot.txt". Should be equivalent to the number of elections.
     private int countBallots()
     {
-        File currentDir = new File("./");
+        File currentDir = new File("./ballots/");
         int output = 0;
         FileFilter filter = new FileFilter()
         {
@@ -88,20 +95,21 @@ public class DB
         };
         try {
             // Finds number of ballot.txt files in current directory
-            output = currentDir.listFiles(filter).length;
+            ballotNames = currentDir.listFiles(filter);
+            output = ballotNames.length;
         }
         catch (NullPointerException e) {
             System.out.println("No ####ballot.txt files found.");
         }
         return output;
     }
-    
-    
+
+
     private void loadVotes()
     {
 
     }
-    
+
     // Takes a line of comma-separated values and
     // returns an ArrayList of individual strings.
     // from https://www.baeldung.com/java-csv-file-array
@@ -118,7 +126,7 @@ public class DB
         }
         return values;
     }
-    
+
     private void print(ArrayList<HashMap> ballot)
     {
         for (HashMap<String, String> h : ballot)
@@ -129,6 +137,15 @@ public class DB
                 System.out.println("key: " + i + " value: " + h.get(i));
             }
             System.out.println();
+        }
+    }
+
+    private void print(File[] files)
+    {
+        for (File f : files)
+        {
+            // Print File
+            System.out.println(f);
         }
     }
 }
