@@ -1,33 +1,39 @@
 // DB.java
 // @author Douglas Kiang
-
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.io.*;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileReader;
 import java.io.FileNotFoundException;
+import java.io.BufferedReader;
 
 public class DB
 {
     private int elections; // Number of ballots in the ballots directory
     private File[] ballotNames; // List of all the ballot names in the ballots directory
+    private File[] voteNames; // List of all the vote names in the votes directory
     private ArrayList<Voter> voters; // Voter database
+    private HashMap<Integer, Integer[]> results; // Map of all vote results for all elections, keyted by electionID
     int numVoters; // Total number of registered voters
     private int[] electionIDs; // Array of unique elections
+    private int[] votes; // Votes
     private ArrayList<Candidate> ballots;
     Scanner sn;
 
     public DB()
     {
         elections = countBallots(); // Gets number of ballot text files
-        // print(ballotNames); // Testing line
         ballots = new ArrayList<Candidate>();
         voters = new ArrayList<Voter>();
-        loadBallots();
+        loadAllBallots();
         loadVoters();
-        // printVoters();
+        loadAllVotes();
+        results = new HashMap<Integer, Integer[]>();
     }
 
     // Fills the voters ArrayList with voters read in from voters.txt
@@ -74,8 +80,8 @@ public class DB
         }
     }
 
-    // Fills the
-    private void loadBallots()
+    // Fills the ballot with all Candidates from every year read in from all ballot.txt files
+    private void loadAllBallots()
     {
         // For each ballot file in directory
         for (int i = 0; i < elections; i++)
@@ -139,9 +145,7 @@ public class DB
     // Returns an ArrayList of Candidates who are running in a given election year.
     public ArrayList<Candidate> getBallot(int year)
     {
-        //System.out.println("GetBallot called.");
         ArrayList<Candidate> output = new ArrayList<Candidate>();
-        // printBallot(ballots);
         for (Candidate c : ballots)
         {
             if(c.getYear() == year)
@@ -153,10 +157,71 @@ public class DB
         return output;
     }
 
-    // Loads votes from votes.txt
-    private void loadVotes()
+    // Loads votes from all ####votes.txt files into results array
+    private void loadAllVotes()
     {
-        
+        // Load all ####votes.txt filenames into voteNames
+        File currentDir = new File("./votes/");
+        FileFilter filter = new FileFilter()
+        {
+            public boolean accept(File f)
+            {
+                return f.getName().endsWith("votes.txt");
+            }
+        };
+        try {
+            // Finds number of votes.txt files in current directory
+            voteNames = currentDir.listFiles(filter);
+        }
+        catch (NullPointerException e) {
+            System.out.println("No ####votes.txt files found.");
+        }
+        // Iterate over voteNames and process votes into results
+        for (int i = 0, n = voteNames.length; i < n; i++)
+        {
+            Integer[] temp;
+            try {
+                sn = new Scanner(voteNames[i]);
+            }
+            catch (FileNotFoundException e) {
+                System.out.println("No file found.");
+            }
+            String filename = voteNames[i].getName();
+            int ballotYear = Integer.parseInt(filename.substring(0,filename.indexOf("votes")));
+            try {
+                temp = new Integer[getNumberOfCandidates(ballotYear)];
+            }
+            catch (IOException e) {
+                System.out.println("IO Exception thrown");
+                temp = new Integer[6];
+            }
+            while (sn.hasNextInt())
+            {
+                int vote = sn.nextInt();
+                temp[vote]++;
+            }
+            // Copy results for this election into global results
+            results.put(ballotYear,temp);
+        }
+        System.out.println(Arrays.asList(results));
+    }
+
+    // Returns the number of candidates on the ballot in a given year.
+    public int getNumberOfCandidates(int year) throws IOException
+    {
+        String filename = "ballots/" + String.valueOf(year) + "ballot.txt";
+        // System.out.println(filename);
+        Scanner sn = new Scanner(filename);
+        BufferedReader reader = new BufferedReader(new FileReader(filename));
+        int lines = 0;
+        try {
+            while (reader.readLine() != null) lines++;
+            reader.close();
+        }
+        catch (IOException e) {
+            System.out.println("IO Exception thrown.");
+        }
+        return lines;
     }
 
     // Takes a line of comma-separated values and
