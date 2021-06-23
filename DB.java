@@ -27,10 +27,11 @@ public class DB
         voters = new ArrayList<Voter>();
         loadBallots();
         loadVoters();
-        print(voters);
+        // printVoters();
     }
 
     // Fills the voters ArrayList with voters read in from voters.txt
+    // First five fields are voter info, any fields beyond that are added to an ArrayList of electionIDs.
     private void loadVoters()
     {
         try
@@ -55,7 +56,13 @@ public class DB
                     ArrayList<Integer> past = new ArrayList<Integer>();
                     for (int i = 5; i < values.size(); i++)
                     {
-                        past.add(Integer.parseInt(values.get(i)));
+                        try {
+                            int e = Integer.parseInt(values.get(i));
+                            past.add(e);
+                        }
+                        catch (NumberFormatException e) {
+                            System.out.println("Bad electionID in voters.txt.");
+                        }
                     }
                     addVoter(new Voter(first, last, address, city, state, past));
                 }
@@ -88,7 +95,7 @@ public class DB
                     int id = Integer.parseInt(values.get(2));
                     int office = Integer.parseInt(values.get(3));
                     int year = Integer.parseInt(ballotYear);
-                    ballots.add(new Candidate(first,last,id,office,year)); // Add the hashmap to the votes ArrayList
+                    ballots.add(new Candidate(first,last,id,office,year));
                 }
                 //print(ballots);
             }
@@ -132,7 +139,9 @@ public class DB
     // Returns an ArrayList of Candidates who are running in a given election year.
     public ArrayList<Candidate> getBallot(int year)
     {
+        //System.out.println("GetBallot called.");
         ArrayList<Candidate> output = new ArrayList<Candidate>();
+        // printBallot(ballots);
         for (Candidate c : ballots)
         {
             if(c.getYear() == year)
@@ -140,16 +149,11 @@ public class DB
                 output.add(c);
             }
         }
-        System.out.println(output);
+        printBallot(output);
         return output;
     }
 
-    // Returns a new Candidate object created from parsing hashmap
-    // private Candidate convertToCandidate(HashMap<String,String> h)
-    // {
-    //     return new Candidate(h.get("CandidateFirstName"), h.get("CandidateLastName"), Integer.parseInt(h.get("CandidateOffice")), Integer.parseInt(h.get("CandidateID")));
-    // }
-
+    // Loads votes from votes.txt
     private void loadVotes()
     {
         
@@ -173,15 +177,15 @@ public class DB
     }
 
     // For testing, prints out the Ballot
-    // private void print(ArrayList<Candidate> ballot)
-    // {
-    //     for (Candidate c : ballot)
-    //     {
-    //         System.out.println(c);
-    //     }
-    // }
+    private void printBallot(ArrayList<Candidate> ballot)
+    {
+        for (Candidate c : ballot)
+        {
+            System.out.println(c);
+        }
+    }
 
-    private void print(File[] files)
+    private void printFiles(File[] files)
     {
         for (File f : files)
         {
@@ -190,7 +194,7 @@ public class DB
         }
     }
     
-    private void print(ArrayList<Voter> voters)
+    private void printVoters()
     {
         for (Voter v : voters)
         {
