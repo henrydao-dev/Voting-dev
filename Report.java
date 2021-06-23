@@ -15,12 +15,12 @@ public class Report {
 	
 	private ArrayList<Candidate> ballot = new ArrayList<Candidate>();	// Holds all the Candidate information relevant to the given electionID
 	private ArrayList<Integer> votes = new ArrayList<Integer>();		// Holds all of the votes for the candidates on the ballot
-	private Double[] percentages;										// Holds the percentages of votes to each candidate
-	private int electionID;												// Used in reporting the name of the election
-	private int numVoters;												// Used to report how many registered voters there are
-	private int voteCount;												// Used to report the numbers of votes placed in the given election
-	private int candidates;												// Used in calculating percentages of votes
-	private int officeCount;											// Used for looping through the ArrayLists
+	private Double[] percentages;						// Holds the percentages of votes to each candidate
+	private int electionID;							// Used in reporting the name of the election
+	private int numVoters;							// Used to report how many registered voters there are
+	private int voteCount;							// Used to report the numbers of votes placed in the given election
+	private int candidates;							// Used in calculating percentages of votes
+	private int officeCount;						// Used for looping through the ArrayLists
 	
 	// default constructor not used
 	public Report() {}
@@ -60,10 +60,10 @@ public class Report {
 	 * 	First:		Last:		Office:		Votes:		Percentage:
 	 * 
 	 * 	John		Doe			President	10					52.0
-	 *  Bob			Dob			President	9					48.0
+	 *  	Bob		Dob			President	9					48.0
 	 *  
-	 *  Steve		Peve		Mayor		8					53.0
-	 *  Ray			Day			Mayor		7					47.0
+	 *  	Steve		Peve			Mayor		8					53.0
+	 *  	Ray		Day			Mayor		7					47.0
 	 *  
 	 *  Copies the values in the votes ArrayList into another ArrayList and then sorts those votes. 
 	 *  Then loops through the the ballot n number of times (n being the number of offices being run
@@ -73,7 +73,11 @@ public class Report {
 	public String ballotReport() {
 		ArrayList<Integer> sortedVotes = new ArrayList<Integer>();
 		String result = "Displaying ballot for the year of " + electionID + ":\n\n";
-		result += String.format("%-12s", "First:") + String.format("%-12s", "Last:") + String.format("%-14s", "Office:") + String.format("%-10s", "Votes:") + String.format("%-12s", "Percentage:") + "\n\n";
+		result += String.format("%-12s", "First:");
+		result += String.format("%-12s", "Last:");
+		result += String.format("%-14s", "Office:");
+		result += String.format("%-10s", "Votes:");
+		result += String.format("%-12s", "Percentage:") + "\n\n";
 		for(Integer i: votes) {
 			sortedVotes.add(i);
 		}

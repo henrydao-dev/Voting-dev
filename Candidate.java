@@ -16,7 +16,7 @@ public class Candidate {
 	private String office;			// Name of the office the candidate is running for
 	private int officeID;			// Number used to identify the office the candidate is running for
 	private int candidateID;		// Number used in ####votes.txt to show the votes belongs to this candidate
-	private int year;				// Year(electionID) the candidate is running in an election
+	private int year;			// Year(electionID) the candidate is running in an election
 	
 	// default constructor not used
 	public Candidate() {}
