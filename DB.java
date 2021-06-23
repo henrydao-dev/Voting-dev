@@ -11,20 +11,23 @@ import java.io.FileNotFoundException;
 
 public class DB
 {
-    private File[] ballotNames;
-    private ArrayList<Voter> voters;
-    int numVoters;
-    private int elections;
-    private int[] electionIDs;
-    private ArrayList<HashMap> votes;
+    private int elections; // Number of ballots in the ballots directory
+    private File[] ballotNames; // List of all the ballot names in the ballots directory
+    private ArrayList<Voter> voters; // Voter database
+    int numVoters; // Total number of registered voters
+    private int[] electionIDs; // Array of unique elections
+    private ArrayList<Candidate> ballots;
     Scanner sn;
 
     public DB()
     {
         elections = countBallots(); // Gets number of ballot text files
-        print(ballotNames); // Testing line
-        votes = new ArrayList<HashMap>();
+        // print(ballotNames); // Testing line
+        ballots = new ArrayList<Candidate>();
+        voters = new ArrayList<Voter>();
         loadBallots();
+        loadVoters();
+        print(voters);
     }
 
     // Fills the voters ArrayList with voters read in from voters.txt
@@ -32,11 +35,30 @@ public class DB
     {
         try
         {
-            sn = new Scanner(new File("voters.txt"));
+            sn = new Scanner(new File("voters/voters.txt"));
             while (sn.hasNextLine())
             {
                 ArrayList<String> values = getRecordFromLine(sn.nextLine());
-                addVoter(new Voter(values.get(0), values.get(1), values.get(2), values.get(3), values.get(4)));
+                String first = values.get(0);
+                String last = values.get(1);
+                String address = values.get(2);
+                String city = values.get(3);
+                String state = values.get(4);
+                // If voter hasn't voted in past elections, create a default Voter
+                if (values.size() == 5)
+                {
+                    addVoter(new Voter(first, last, address, city, state));
+                }
+                // Otherwise, create new ArrayList treating all remaining Strings as new electionIDs
+                else
+                {
+                    ArrayList<Integer> past = new ArrayList<Integer>();
+                    for (int i = 5; i < values.size(); i++)
+                    {
+                        past.add(Integer.parseInt(values.get(i)));
+                    }
+                    addVoter(new Voter(first, last, address, city, state, past));
+                }
             }
         }
         catch (FileNotFoundException e)
@@ -55,18 +77,20 @@ public class DB
             {
                 // Scan through the ballot
                 sn = new Scanner(ballotNames[i]);
-                // Construct a hashmap of each candidate in the ballot
+                String filename = ballotNames[i].getName();
+                String ballotYear = filename.substring(0,filename.indexOf("ballot"));
+                // Construct a new object for each candidate in the ballot
                 while (sn.hasNextLine())
                 {
                     ArrayList<String> values = getRecordFromLine(sn.nextLine());
-                    HashMap<String, String> b = new HashMap<String, String>();
-                    b.put("CandidateFirstName", values.get(0));
-                    b.put("CandidateLastName", values.get(1));
-                    b.put("CandidateID", values.get(2));
-                    b.put("CandidateOffice", values.get(3));
-                    votes.add(b); // Add the hashmap to the votes ArrayList
+                    String first = values.get(0);
+                    String last = values.get(1);
+                    int id = Integer.parseInt(values.get(2));
+                    int office = Integer.parseInt(values.get(3));
+                    int year = Integer.parseInt(ballotYear);
+                    ballots.add(new Candidate(first,last,id,office,year)); // Add the hashmap to the votes ArrayList
                 }
-                print(votes);
+                //print(ballots);
             }
             catch (FileNotFoundException e)
             {
@@ -75,6 +99,7 @@ public class DB
         }
     }
 
+    // Allows external classes to add a voter to the voter database.
     public void addVoter(Voter v)
     {
         voters.add(v);
@@ -104,10 +129,30 @@ public class DB
         return output;
     }
 
+    // Returns an ArrayList of Candidates who are running in a given election year.
+    public ArrayList<Candidate> getBallot(int year)
+    {
+        ArrayList<Candidate> output = new ArrayList<Candidate>();
+        for (Candidate c : ballots)
+        {
+            if(c.getYear() == year)
+            {
+                output.add(c);
+            }
+        }
+        System.out.println(output);
+        return output;
+    }
+
+    // Returns a new Candidate object created from parsing hashmap
+    // private Candidate convertToCandidate(HashMap<String,String> h)
+    // {
+    //     return new Candidate(h.get("CandidateFirstName"), h.get("CandidateLastName"), Integer.parseInt(h.get("CandidateOffice")), Integer.parseInt(h.get("CandidateID")));
+    // }
 
     private void loadVotes()
     {
-
+        
     }
 
     // Takes a line of comma-separated values and
@@ -127,18 +172,14 @@ public class DB
         return values;
     }
 
-    private void print(ArrayList<HashMap> ballot)
-    {
-        for (HashMap<String, String> h : ballot)
-        {
-            // Print keys and values
-            for (String i : h.keySet())
-            {
-                System.out.println("key: " + i + " value: " + h.get(i));
-            }
-            System.out.println();
-        }
-    }
+    // For testing, prints out the Ballot
+    // private void print(ArrayList<Candidate> ballot)
+    // {
+    //     for (Candidate c : ballot)
+    //     {
+    //         System.out.println(c);
+    //     }
+    // }
 
     private void print(File[] files)
     {
@@ -146,6 +187,15 @@ public class DB
         {
             // Print File
             System.out.println(f);
+        }
+    }
+    
+    private void print(ArrayList<Voter> voters)
+    {
+        for (Voter v : voters)
+        {
+            // Print File
+            System.out.println(v);
         }
     }
 }

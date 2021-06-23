@@ -1,4 +1,4 @@
 Joe,Biden,0,0
 Donald,Trump,1,0
-Stewie,Griffin,2,0
-Peter,Griffin,3,0
+Howie,Hawkins,2,0
+Jo,Jorgensen,3,0
