@@ -19,7 +19,7 @@ public class DB
     private File[] voteNames; // List of all the vote names in the votes directory
     private ArrayList<Voter> voters; // Voter database
     private HashMap<Integer, Integer[]> results; // Map of all vote results for all elections, keyted by electionID
-    int numVoters; // Total number of registered voters
+    private int numVoters; // Total number of registered voters
     private int[] electionIDs; // Array of unique elections
     private int[] votes; // Votes
     private ArrayList<Candidate> ballots;
@@ -32,7 +32,7 @@ public class DB
         voters = new ArrayList<Voter>();
         loadAllBallots();
         loadVoters();
-        loadAllVotes();
+        //loadAllVotes();
         results = new HashMap<Integer, Integer[]>();
     }
 
@@ -78,6 +78,7 @@ public class DB
         {
             System.out.println("File not found! Make sure that voters.txt is in the same folder as the class.");
         }
+        //printVoters();
     }
 
     // Fills the ballot with all Candidates from every year read in from all ballot.txt files
@@ -103,7 +104,7 @@ public class DB
                     int year = Integer.parseInt(ballotYear);
                     ballots.add(new Candidate(first,last,id,office,year));
                 }
-                //print(ballots);
+                printBallot(ballots);
             }
             catch (FileNotFoundException e)
             {
@@ -120,9 +121,9 @@ public class DB
 
     // Returns the number of files in the current directory that
     // end in "ballot.txt". Should be equivalent to the number of elections.
-    private int countBallots()
+    public int countBallots()
     {
-        File currentDir = new File("./ballots/");
+        File currentDir = new File("ballots/");
         int output = 0;
         FileFilter filter = new FileFilter()
         {
@@ -153,15 +154,21 @@ public class DB
                 output.add(c);
             }
         }
-        printBallot(output);
+        //printBallot(output);
         return output;
+    }
+    
+    // Returns all voters
+    public ArrayList<Voter> getVoters()
+    {
+        return voters;
     }
 
     // Loads votes from all ####votes.txt files into results array
     private void loadAllVotes()
     {
         // Load all ####votes.txt filenames into voteNames
-        File currentDir = new File("./votes/");
+        File currentDir = new File("votes/");
         FileFilter filter = new FileFilter()
         {
             public boolean accept(File f)
@@ -193,7 +200,12 @@ public class DB
             }
             catch (IOException e) {
                 System.out.println("IO Exception thrown");
-                temp = new Integer[6];
+                temp = new Integer[64];
+            }
+            
+            for (int j = 0; j < temp.length; j++)
+            {
+                temp[j] = 0;
             }
             while (sn.hasNextInt())
             {
@@ -216,6 +228,29 @@ public class DB
         int lines = 0;
         try {
             while (reader.readLine() != null) lines++;
+            reader.close();
+        }
+        catch (IOException e) {
+            System.out.println("IO Exception thrown.");
+        }
+        return lines;
+    }
+    
+    public int getNumberOfCandidates(int year, int office) throws IOException
+    {
+        String filename = "ballots/" + String.valueOf(year) + "ballot.txt";
+        // System.out.println(filename);
+        Scanner sn = new Scanner(filename);
+        BufferedReader reader = new BufferedReader(new FileReader(filename));
+        int lines = 0;
+        try {
+            while (reader.readLine() != null)
+            {
+                ArrayList<String> input = getRecordFromLine(reader.readLine());
+                if (input.get(3).equals(String.valueOf(office)))
+                    lines++;
+            }
+
             reader.close();
         }
         catch (IOException e) {
