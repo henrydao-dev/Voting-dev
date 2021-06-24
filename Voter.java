@@ -64,6 +64,11 @@ public class Voter
     
     public String toString()
     {
-        return firstName + " " + lastName + ", " + state + " " + elections;
+    	String result = "";
+    	result += String.format("%-12s", firstName);
+    	result += String.format("%-12s", lastName);
+    	result += String.format("%-4s", state) + "\n";
+    	result += String.format("%-30s", "Elections participated in: " + elections) + "\n\n";
+        return result;
     }
 }
