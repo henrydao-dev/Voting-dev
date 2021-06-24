@@ -14,6 +14,7 @@ import java.util.Collections;
 public class Report {
 	
 	private ArrayList<Candidate> ballot = new ArrayList<Candidate>();	// Holds all the Candidate information relevant to the given electionID
+	private ArrayList<Voter> voters = new ArrayList<Voter>();		// Holds all the registered Voter information
 	private ArrayList<Integer> votes = new ArrayList<Integer>();		// Holds all of the votes for the candidates on the ballot
 	private Double[] percentages;						// Holds the percentages of votes to each candidate
 	private int electionID;							// Used in reporting the name of the election
@@ -28,8 +29,9 @@ public class Report {
 	/*
 	 * Argument constructor used in setting/initializing the values of all the variables for the object.
 	 */
-	public Report(int electionID, int numVoters, ArrayList<Candidate> ballot, ArrayList<Integer> votes) {
+	public Report(int electionID, int numVoters, ArrayList<Candidate> ballot, ArrayList<Integer> votes, ArrayList<Voter> voters) {
 		this.ballot = ballot;
+		this.voters = voters;
 		this.votes = votes;
 		this.electionID = electionID;
 		this.numVoters = numVoters;
@@ -40,6 +42,7 @@ public class Report {
 		}
 		percentages = new Double[candidates];
 		calcPercentage();
+		System.out.println(votes.size());
 	}
 	
 	/*
@@ -59,11 +62,11 @@ public class Report {
 	 * 
 	 * 	First:		Last:		Office:		Votes:		Percentage:
 	 * 
-	 * 	John		Doe			President	10					52.0
-	 *  	Bob		Dob			President	9					48.0
+	 * 	John		Doe		President	10			52.0
+	 *  	Bob		Dob		President	9			48.0
 	 *  
-	 *  	Steve		Peve			Mayor		8					53.0
-	 *  	Ray		Day			Mayor		7					47.0
+	 *  	Steve		Peve		Mayor		8			53.0
+	 *  	Ray		Day		Mayor		7			47.0
 	 *  
 	 *  Copies the values in the votes ArrayList into another ArrayList and then sorts those votes. 
 	 *  Then loops through the the ballot n number of times (n being the number of offices being run
@@ -72,25 +75,30 @@ public class Report {
 	 */
 	public String ballotReport() {
 		ArrayList<Integer> sortedVotes = new ArrayList<Integer>();
+		String office = "";		
 		String result = "Displaying ballot for the year of " + electionID + ":\n\n";
-		result += String.format("%-12s", "First:");
-		result += String.format("%-12s", "Last:");
-		result += String.format("%-14s", "Office:");
-		result += String.format("%-10s", "Votes:");
-		result += String.format("%-12s", "Percentage:") + "\n\n";
 		for(Integer i: votes) {
 			sortedVotes.add(i);
 		}
 		Collections.sort(sortedVotes);
 		for(int i = 0; i < officeCount; i++) {
+			switch (i) {
+				case 0: office = "President"; break;
+				case 1: office = "House Rep"; break;
+				case 2: office = "Senate"; break;
+				case 3: office = "Mayor"; break;
+				default: office = "President"; break;
+			}
+			result += String.format("%-24s", "Running for " + office + ":");
+			result += String.format("%12s", "Votes:");
+			result += String.format("%12s", "Percent:") + "\n";
 			for(int j = (votes.size() - 1); j >= 0; j--) {
 				int k = votes.indexOf(sortedVotes.get(j));
 				if(ballot.get(k).getOfficeID() == i) {
 				result += 
 						String.format("%-12s", ballot.get(k).getFirstName()) + 
 						String.format("%-12s", ballot.get(k).getLastName()) + 
-						String.format("%-14s", ballot.get(k).getOffice()) + 
-						String.format("%-10s", votes.get(k)) + 
+						String.format("%12s", votes.get(k)) + 
 						String.format("%12.1f", percentages[k]) + "\n";	
 				}
 			}
@@ -161,6 +169,49 @@ public class Report {
 					percentages[j] = perc;
 				}
 			}
+		}
+	}
+	
+	/*
+	 * Returns a formated string that displays all registered voter information.
+	 * Will also return a string of no found voters if necessary.
+	 */
+	public String reportVoters() {
+		String result = "";
+		if(voters.isEmpty()) {
+			result = "No registered voters";
+			return result;
+		}
+		else {
+			for(Voter v: voters) {
+				result += String.format("%-30s", v.toString()) + "\n";
+			}
+		}
+		return result;
+	}
+	
+	/*
+	 * Returns a formated string that displays voter information for all voters from
+	 * a specified state. Will also return a string of no found voters if necessary.
+	 */
+	public String reportVotersState(String state) {
+		String result = "";
+		int count = 0;
+		if(voters.isEmpty()) {
+			result = "No registered voters";
+			return result;
+		}
+		for(Voter v: voters) {
+			if(v.getState().equals(state)) {
+				result += String.format("%-30s", v.toString()) + "\n";
+				count++;
+			}
+		}
+		if(count > 0)
+			return result;
+		else {
+			result = "No registered voters in " + state;
+			return result;
 		}
 	}
 
