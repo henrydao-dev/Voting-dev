@@ -4,13 +4,13 @@
  */
 
 public class Vote {
-	
+
 	private int electionID;
 	private int[] votes;
-	
+
 	// default constructor not used
 	public Vote() {}
-	
+
 	/*
 	 *  arg constructor that stores the votes in an int array along with the candidateID (year)
 	 */
@@ -18,7 +18,7 @@ public class Vote {
 		this.electionID = electionID;
 		this.votes = votes;
 	}
-	
+
 	/***************************************************
 	 *               Getters and Setters               *
 	 ***************************************************/
@@ -36,6 +36,9 @@ public class Vote {
 	}
 
 	public void setVotes(int[] votes) {
-		this.votes = votes;
+		for (int i : votes)
+		{
+			this.votes[i] = votes[i];
+		}
 	}
 }
