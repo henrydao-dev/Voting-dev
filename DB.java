@@ -104,6 +104,21 @@ public class DB
         return voters;
     }
     
+    // Returns last occurrence of a Voter with matching id
+    // If no match, returns null
+    public Voter search(int id)
+    {
+        Voter output = null;
+        for (Voter v : voters)
+        {
+            if (v.getID() == id)
+            {
+                output = v;
+            }
+        }
+        return output;
+    }
+    
     // Returns an ArrayList of all votes recorded for all elections
     public ArrayList<Vote> getVotes()
     {
