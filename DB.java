@@ -2,28 +2,26 @@
 // @author Douglas Kiang
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
-import java.io.*;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
-import java.io.BufferedReader;
+import java.util.List;
+import java.util.Scanner;
 
 public class DB
 {
+    private final int ELECTIONDATA = 5;
+    private int NUMOFFICES = 4;
     private int elections; // Number of ballots in the ballots directory
     private File[] ballotNames; // List of all the ballot names in the ballots directory
     private File[] voteNames; // List of all the vote names in the votes directory
     private ArrayList<Voter> voters; // Voter database
-    private ArrayList<Vote> votes; // Map of all votes for all elections, keyted by electionID
+    private ArrayList<Vote> votes; // All votes for all elections
     private int numVoters; // Total number of registered voters
-    private int[] electionIDs; // Array of unique elections
     private ArrayList<Candidate> ballots;
-    final int ELECTIONDATA = 5;
-    final int NUMOFFICES = 4;
+
     Scanner sn;
 
     public DB()
@@ -42,43 +40,22 @@ public class DB
 	 ***************************************************/
 
     // Returns the total number of candidates on the ballot in a given year.
-    public int getNumberOfCandidates(int year) throws IOException
+    public int getNumberOfCandidates(int year)
     {
-        String filename = "ballots/" + String.valueOf(year) + "ballot.txt";
-        // System.out.println(filename);
-        Scanner sn = new Scanner(filename);
-        BufferedReader reader = new BufferedReader(new FileReader(filename));
-        int lines = 0;
-        try {
-            while (reader.readLine() != null) lines++;
-            reader.close();
-        }
-        catch (IOException e) {
-            System.out.println("IO Exception thrown.");
-        }
-        return lines;
+        return getBallot(year).size();
     }
     
     // Returns the number of candidates on the ballot for a given office in a given year.
-    public int getNumberOfCandidates(int year, int office) throws IOException
+    public int getNumberOfCandidates(int year, String office)
     {
-        String filename = "ballots/" + String.valueOf(year) + "ballot.txt";
-        // System.out.println(filename);
-        Scanner sn = new Scanner(filename);
-        BufferedReader reader = new BufferedReader(new FileReader(filename));
         int count = 0;
-        try {
-            while (reader.readLine() != null)
+        ArrayList<Candidate> all = getBallot(year);
+        for (Candidate c : all)
+        {
+            if (c.getOffice().equals(office))
             {
-                ArrayList<String> input = getRecordFromLine(reader.readLine());
-                if (input.get(3).equals(String.valueOf(office)))
-                    count++;
+                count++;
             }
-
-            reader.close();
-        }
-        catch (IOException e) {
-            System.out.println("IO Exception thrown.");
         }
         return count;
     }
