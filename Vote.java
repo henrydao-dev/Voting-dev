@@ -2,6 +2,7 @@
  * This object represents a voter's votes on a ballot
  * The candidates that were voted for along with the year the vote was placed is stored here.
  */
+import java.util.Arrays;
 
 public class Vote {
 
@@ -40,5 +41,11 @@ public class Vote {
 		{
 			this.votes[i] = votes[i];
 		}
+	}
+	
+	// Prints out each vote's election ID and the votes, one per line.
+	public String toString()
+	{
+		return electionID + " " + Arrays.toString(votes);
 	}
 }

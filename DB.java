@@ -3,6 +3,7 @@
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.io.BufferedReader;
+import java.util.Collections;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileReader;
@@ -15,6 +16,7 @@ public class DB
     private final int ELECTIONDATA = 5;
     private int NUMOFFICES = 4;
     private int elections; // Number of ballots in the ballots directory
+    private int[] electionIDs; // Array of all electionIDs
     private File[] ballotNames; // List of all the ballot names in the ballots directory
     private File[] voteNames; // List of all the vote names in the votes directory
     private ArrayList<Voter> voters; // Voter database
@@ -29,8 +31,9 @@ public class DB
         elections = countBallots(); // Gets number of ballot text files
         ballots = new ArrayList<Candidate>();
         voters = new ArrayList<Voter>();
+        electionIDs = new int[countBallots()];
         loadAllBallots();
-        //loadVoters();
+        loadVoters();
         votes = new ArrayList<Vote>();
         loadAllVotes();
     }
@@ -39,17 +42,32 @@ public class DB
 	 *               Getter Methods                    *
 	 ***************************************************/
 
-    // Returns the total number of candidates on the ballot in a given year.
-    public int getNumberOfCandidates(int year)
+    // Returns an ArrayList of Candidates who are running in a given election year.
+    public ArrayList<Candidate> getBallot(int electionID)
     {
-        return getBallot(year).size();
+        ArrayList<Candidate> output = new ArrayList<Candidate>();
+        for (Candidate c : ballots)
+        {
+            if(c.getYear() == electionID)
+            {
+                output.add(c);
+            }
+        }
+        //printBallot(output);
+        return output;
     }
-    
+
+    // Returns the total number of candidates on the ballot in a given year.
+    public int getNumberOfCandidates(int electionID)
+    {
+        return getBallot(electionID).size();
+    }
+
     // Returns the number of candidates on the ballot for a given office in a given year.
-    public int getNumberOfCandidates(int year, String office)
+    public int getNumberOfCandidates(int electionID, String office)
     {
         int count = 0;
-        ArrayList<Candidate> all = getBallot(year);
+        ArrayList<Candidate> all = getBallot(electionID);
         for (Candidate c : all)
         {
             if (c.getOffice().equals(office))
@@ -60,72 +78,92 @@ public class DB
         return count;
     }
 
-    // Returns an ArrayList of Candidates who are running in a given election year.
-    public ArrayList<Candidate> getBallot(int year)
-    {
-        ArrayList<Candidate> output = new ArrayList<Candidate>();
-        for (Candidate c : ballots)
-        {
-            if(c.getYear() == year)
-            {
-                output.add(c);
-            }
-        }
-        //printBallot(output);
-        return output;
-    }
-    
     // Returns all voters
     public ArrayList<Voter> getVoters()
     {
         return voters;
     }
-    
-    // Returns last occurrence of a Voter with matching id
+
+    // Returns first occurrence of a Voter with matching id
     // If no match, returns null
-    public Voter search(int id)
+    public Voter search(int voterID)
     {
-        Voter output = null;
-        for (Voter v : voters)
+        int index = findVoter(voterID);
+        if (index < 0)
         {
-            if (v.getID() == id)
-            {
-                output = v;
-            }
+            return null;
         }
-        return output;
+        return voters.get(index);
     }
-    
+
     // Returns an ArrayList of all votes recorded for all elections
     public ArrayList<Vote> getVotes()
     {
         return votes;
     }
-    
+
     // Returns an ArrayList of all votes recorded for a given electionID
-    public ArrayList<Vote> getVotes(int id)
+    public ArrayList<Vote> getVotes(int electionID)
     {
         ArrayList<Vote> output = new ArrayList<Vote>();
         for (Vote v : votes)
         {
-            if (v.getElectionID() == id)
+            if (v.getElectionID() == electionID)
             {
                 output.add(v);
             }
         }
         return output;
     }
-    
+
     /***************************************************
 	 *               Setter Methods                    *
 	 ***************************************************/
-    
+
     // Allows external classes to add a voter to the voter database.
     public void addVoter(Voter v)
     {
         voters.add(v);
     }
 
+    // Updates Voter's record to show they voted in a given election
+    public void recordElection(int electionID, int voterID)
+    {
+        int index = findVoter(voterID);
+        // If valid voterID and electionID add electionID to voter's record.
+        // Otherwise, fail silently.
+        if (index >= 0 && isValid(electionID))
+        {
+            voters.get(index).addElection(electionID);
+        }
+    }
+
+    // Adds a Vote to the votes database.
+    // Verifies that electionID is valid and number of votes
+    // matches the number of candidates on the ballot.
+    public void addVote(Vote vote)
+    {
+        int year = vote.getElectionID();
+        if(isValid(year) && vote.getVotes().length == getNumberOfCandidates(year))
+        {
+            votes.add(vote);
+        }
+    }
+    
+    public int[] tabulate(int electionID)
+    {
+        int[] results = new int[getNumberOfCandidates(electionID)];
+        ArrayList<Vote> table = getVotes(electionID);
+        for (Vote v : table)
+        {
+            int[] votes = v.getVotes();
+            for (int n : votes)
+            {
+                results[n]++;
+            }
+        }
+        return results;
+    }
 
     /***************************************************
 	 *               Helper Methods                    *
@@ -157,7 +195,7 @@ public class DB
     }
 
     // Fills the voters ArrayList with voters read in from voters.txt
-    // First six fields are voter info, any fields beyond that are added to an ArrayList of electionIDs.
+    // First five fields are voter info, sixth is generated ID, any fields beyond that are added to an ArrayList of electionIDs.
     private void loadVoters()
     {
         try
@@ -166,15 +204,10 @@ public class DB
             while (sn.hasNextLine())
             {
                 ArrayList<String> values = getRecordFromLine(sn.nextLine());
-                String first = values.get(0);
-                String last = values.get(1);
-                String address = values.get(2);
-                String city = values.get(3);
-                String state = values.get(4);
                 // If voter hasn't voted in past elections, create a default Voter
                 if (values.size() == ELECTIONDATA)
                 {
-                    addVoter(new Voter(first, last, address, city, state));
+                     addVoter(new Voter(values.get(0), values.get(1), values.get(2), values.get(3), values.get(4)));
                 }
                 // Otherwise, create new ArrayList treating all remaining Strings as new electionIDs
                 else
@@ -190,7 +223,7 @@ public class DB
                             System.out.println("Bad electionID in voters.txt.");
                         }
                     }
-                    addVoter(new Voter(first, last, address, city, state, past));
+                    addVoter(new Voter(values.get(0), values.get(1), values.get(2), values.get(3), values.get(4), past));
                 }
             }
         }
@@ -198,7 +231,8 @@ public class DB
         {
             System.out.println("File not found! Make sure that voters.txt is in the same folder as the class.");
         }
-        //printVoters();
+        // Sort voters by ID
+        quickSort(0,voters.size() - 1);
     }
 
     // Fills the ballot with all Candidates from every year read in from all ballot.txt files
@@ -210,9 +244,12 @@ public class DB
             try
             {
                 // Scan through the ballot
+                // ballotNames contains the names of every ballot file in the ballots directory
                 sn = new Scanner(ballotNames[i]);
                 String filename = ballotNames[i].getName();
-                String ballotYear = filename.substring(0,filename.indexOf("ballot"));
+                int ballotYear = Integer.valueOf(filename.substring(0,filename.indexOf("ballot")));
+                // Add ballotYear to electionIDs
+                electionIDs[i] = ballotYear;
                 // Construct a new object for each candidate in the ballot
                 while (sn.hasNextLine())
                 {
@@ -221,8 +258,7 @@ public class DB
                     String last = values.get(1);
                     int id = Integer.parseInt(values.get(2));
                     int office = Integer.parseInt(values.get(3));
-                    int year = Integer.parseInt(ballotYear);
-                    ballots.add(new Candidate(first,last,id,office,year));
+                    ballots.add(new Candidate(first,last,id,office,ballotYear));
                 }
                 //printBallot(ballots);
             }
@@ -299,6 +335,46 @@ public class DB
         return values;
     }
 
+    // Binary search returns the index of the voter with given id.
+    // Returns -1 if voter is not found.
+    private int findVoter(int id)
+    {
+        int start = 0; 
+        int end = voters.size() - 1;
+        while (start <= end)
+        {
+            // get midpoint
+            int mid = (start + end) / 2;
+            // if midpoint < val
+            if (voters.get(mid).getID() < id)
+            {
+                // move start just to the right of midpoint
+                start = mid + 1;
+            }
+            else if (voters.get(mid).getID() > id)
+            {
+                // move end just to the left of midpoint
+                end = mid - 1;
+            }
+            else return mid;
+        }
+        // Voter not found
+        return -1;
+    }
+
+    // Returns true iff electionID is one of the ballot prefixes.
+    private boolean isValid(int electionID)
+    {
+        for (int e : electionIDs)
+        {
+            if (electionID == e)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // For testing, prints out the Ballot
     private void printBallot(ArrayList<Candidate> ballot)
     {
@@ -308,6 +384,7 @@ public class DB
         }
     }
 
+    // For testing, prints out all Files in files
     private void printFiles(File[] files)
     {
         for (File f : files)
@@ -316,7 +393,8 @@ public class DB
             System.out.println(f);
         }
     }
-    
+
+    // For testing, prints out voters
     private void printVoters()
     {
         for (Voter v : voters)
@@ -324,5 +402,41 @@ public class DB
             // Print File
             System.out.println(v);
         }
+    }
+    
+    // Manually sort Voters by id. Collections wasn't doing it for me.
+    private void quickSort(int low, int high)
+    {
+        if (low < high)
+        {
+            int pi = partition(low, high);
+            quickSort(low, pi - 1);
+            quickSort(pi + 1, high);
+        }
+    }
+        
+    // Helper method for QuickSort
+    private int partition(int low, int high)
+    {
+        int pivot = voters.get(high).getID();
+        int i = low - 1;
+        for (int j = low; j <= high - 1; j++)
+        {
+            if (voters.get(j).getID() < pivot)
+            {
+                i++;
+                swap(i,j);
+            }
+        }
+        swap(i + 1, high);
+        return (i + 1);
+    }
+    
+    // Helper method for QuickSort
+    private void swap(int x, int y)
+    {
+        Voter temp = voters.get(x);
+        voters.set(x, voters.get(y));
+        voters.set(y,temp);
     }
 }
