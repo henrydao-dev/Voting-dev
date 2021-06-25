@@ -11,6 +11,7 @@ public class Voter
     private String address;
     private String city;
     private String state;
+    private int id;
     private ArrayList<Integer> elections;
     
     public Voter(String first, String last, String address, String city, String state)
@@ -20,6 +21,7 @@ public class Voter
         this.address = address;
         this.city = city;
         this.state = state;
+        id = generateID();
         elections = new ArrayList<Integer>();
     }
     
@@ -70,5 +72,18 @@ public class Voter
     	result += String.format("%-4s", state) + "\n";
     	result += String.format("%-30s", "Elections participated in: " + elections) + "\n\n";
         return result;
+    }
+    
+    // Generates a unique Voter ID (hash) based on the voter's name and address
+    // Hash will always be the same given the same name and address
+    private int generateID()
+    {
+        String temp = firstName + lastName + address + city + state;
+        int hash = 7;
+        for (int i = 0, n = temp.length(); i < n; i++)
+        {
+            hash = hash * 31 + temp.charAt(i);
+        }
+        return hash;
     }
 }
