@@ -15,8 +15,7 @@ public class Report {
 	
 	private ArrayList<Candidate> ballot = new ArrayList<Candidate>();	// Holds all the Candidate information relevant to the given electionID
 	private ArrayList<Voter> voters = new ArrayList<Voter>();		// Holds all the registered Voter information
-	private ArrayList<Integer> votes = new ArrayList<Integer>();		// Holds all of the votes for the candidates on the ballot
-	private Double[] percentages;						// Holds the percentages of votes to each candidate
+	private ArrayList<Vote> votes = new ArrayList<Vote>();			// Holds all of the votes for the candidates on the ballot
 	private int electionID;							// Used in reporting the name of the election
 	private int numVoters;							// Used to report how many registered voters there are
 	private int voteCount;							// Used to report the numbers of votes placed in the given election
@@ -29,20 +28,28 @@ public class Report {
 	/*
 	 * Argument constructor used in setting/initializing the values of all the variables for the object.
 	 */
-	public Report(int electionID, int numVoters, ArrayList<Candidate> ballot, ArrayList<Integer> votes, ArrayList<Voter> voters) {
+	public Report(int electionID, ArrayList<Candidate> ballot, ArrayList<Vote> votes, ArrayList<Voter> voters) {
 		this.ballot = ballot;
 		this.voters = voters;
 		this.votes = votes;
 		this.electionID = electionID;
-		this.numVoters = numVoters;
+		this.numVoters = voters.size();
 		candidates = ballot.size();
-		officeCount = votes.size();
-		for(Integer i : votes) {
-			voteCount += i;
+		officeCount = votes.get(0).getVotes().length;
+		voteCount = votes.size();
+		tallyVotes();
+	}
+	
+	public void tallyVotes() {
+		for(int i = 0; i < votes.size(); i++) {
+			for(int j = 0; j < votes.get(0).getVotes().length; j++) {
+				for(int k = 0; k < ballot.size(); k++) {
+					if(ballot.get(k).getCandidateID() == votes.get(i).getVotes()[j]) {
+						ballot.get(k).addVote();
+					}
+				}
+			}
 		}
-		percentages = new Double[candidates];
-		calcPercentage();
-		System.out.println(votes.size());
 	}
 	
 	/*
@@ -74,14 +81,11 @@ public class Report {
 	 *  to least votes to the string that will be returned by the method.
 	 */
 	public String ballotReport() {
-		ArrayList<Integer> sortedVotes = new ArrayList<Integer>();
 		String office = "";		
 		String result = "Displaying ballot for the year of " + electionID + ":\n\n";
-		for(Integer i: votes) {
-			sortedVotes.add(i);
-		}
-		Collections.sort(sortedVotes);
+		
 		for(int i = 0; i < officeCount; i++) {
+			ArrayList<Candidate> sortedVotes = new ArrayList<Candidate>();
 			switch (i) {
 				case 0: office = "President"; break;
 				case 1: office = "House Rep"; break;
@@ -92,15 +96,18 @@ public class Report {
 			result += String.format("%-24s", "Running for " + office + ":");
 			result += String.format("%12s", "Votes:");
 			result += String.format("%12s", "Percent:") + "\n";
-			for(int j = (votes.size() - 1); j >= 0; j--) {
-				int k = votes.indexOf(sortedVotes.get(j));
-				if(ballot.get(k).getOfficeID() == i) {
-				result += 
-						String.format("%-12s", ballot.get(k).getFirstName()) + 
-						String.format("%-12s", ballot.get(k).getLastName()) + 
-						String.format("%12s", votes.get(k)) + 
-						String.format("%12.1f", percentages[k]) + "\n";	
+			
+			for(int j = 0; j < ballot.size(); j++) {
+				if(ballot.get(j).getOfficeID() == i) {
+					sortedVotes.add(ballot.get(j));
 				}
+			}
+			Collections.sort(sortedVotes);
+			for(int j = sortedVotes.size() - 1; j >= 0; j--) {
+				result += String.format("%-12s", sortedVotes.get(j).getFirstName());
+				result += String.format("%-12s", sortedVotes.get(j).getLastName());
+				result += String.format("%12s", sortedVotes.get(j).getVotes());
+				result += String.format("%12.1f", calcPercentage(sortedVotes.get(j), sortedVotes)) + "\n";
 			}
 			result += "\n";
 		}
@@ -149,27 +156,14 @@ public class Report {
 	 *  Does the required math to figure out the percentages of votes to each candidate.
 	 *  Percentages are based off total votes for each given office, not total votes.
 	 */
-	private void calcPercentage() {
-		double perc = 0;
-		int[] officeVoteCount = new int[officeCount];
-		for(int i = 0; i < officeCount; i++) {
-			officeVoteCount[i] = 0;
+	private Double calcPercentage(Candidate x,ArrayList<Candidate> c) {
+		double percent = 0;
+		int totalVotes = 0;
+		for(Candidate can: c) {
+			totalVotes += can.getVotes();
 		}
-		for(int i = 0; i < officeCount; i++) {
-			for(int j = 0; j < candidates; j++) {
-				if(ballot.get(j).getOfficeID() == i) {
-					officeVoteCount[i] += votes.get(j);
-				}
-			}
-		}
-		for(int i = 0; i < officeCount; i++) {
-			for(int j = 0; j < candidates; j++) {
-				if(ballot.get(j).getOfficeID() == i) {
-					perc = ((double)votes.get(j) / officeVoteCount[i]) * 100;
-					percentages[j] = perc;
-				}
-			}
-		}
+		percent = ((double)x.getVotes() / (double)totalVotes) * 100;
+		return percent;
 	}
 	
 	/*
@@ -184,7 +178,7 @@ public class Report {
 		}
 		else {
 			for(Voter v: voters) {
-				result += String.format("%-30s", v.toString()) + "\n";
+				result += String.format("%-30s", v.toString());
 			}
 		}
 		return result;

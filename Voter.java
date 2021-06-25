@@ -21,7 +21,7 @@ public class Voter
         this.address = address;
         this.city = city;
         this.state = state;
-        id = generateID();
+        setID(generateID());
         elections = new ArrayList<Integer>();
     }
     
@@ -32,6 +32,19 @@ public class Voter
         {
             this.elections.add(i);
         }
+    }
+    
+ // Generates a unique Voter ID (hash) based on the voter's name and address
+    // Hash will always be the same given the same name and address
+    private int generateID()
+    {
+        String temp = firstName + lastName + address + city + state;
+        int hash = 7;
+        for (int i = 0, n = temp.length(); i < n; i++)
+        {
+            hash = hash * 31 + temp.charAt(i);
+        }
+        return hash;
     }
     
     public String getFirstName()
@@ -64,26 +77,24 @@ public class Voter
         elections.add(id);
     }
     
-    public String toString()
+    public int getID() {
+		return id;
+	}
+
+	public void setID(int id) {
+		this.id = id;
+	}
+
+	public String toString()
     {
     	String result = "";
     	result += String.format("%-12s", firstName);
     	result += String.format("%-12s", lastName);
     	result += String.format("%-4s", state) + "\n";
-    	result += String.format("%-30s", "Elections participated in: " + elections) + "\n\n";
+    	if(elections.isEmpty())
+    		result += String.format("%-30s", "Elections participated in: [none]") + "\n\n";
+    	else
+    		result += String.format("%-30s", "Elections participated in: " + elections) + "\n\n";
         return result;
-    }
-    
-    // Generates a unique Voter ID (hash) based on the voter's name and address
-    // Hash will always be the same given the same name and address
-    private int generateID()
-    {
-        String temp = firstName + lastName + address + city + state;
-        int hash = 7;
-        for (int i = 0, n = temp.length(); i < n; i++)
-        {
-            hash = hash * 31 + temp.charAt(i);
-        }
-        return hash;
     }
 }

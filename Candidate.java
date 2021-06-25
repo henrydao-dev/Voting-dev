@@ -9,7 +9,7 @@
  * 	-year they are running for
  */
 
-public class Candidate {
+public class Candidate implements Comparable<Candidate> {
 	
 	private String firstName;		// First name of candidate
 	private String lastName;		// Last name of candidate
@@ -17,6 +17,7 @@ public class Candidate {
 	private int officeID;			// Number used to identify the office the candidate is running for
 	private int candidateID;		// Number used in ####votes.txt to show the votes belongs to this candidate
 	private int year;			// Year(electionID) the candidate is running in an election
+	private int votes;			// Keeps track of how many votes this candidate has received
 	
 	// default constructor not used
 	public Candidate() {}
@@ -37,6 +38,15 @@ public class Candidate {
 		this.officeID = office;
 		this.candidateID = id;
 		this.year = year;
+		this.votes = 0;
+	}
+	
+	public void addVote() {
+		votes++;
+	}
+	
+	public int compareTo(Candidate c) {
+		return this.votes - c.votes;
 	}
 	
 	/*
@@ -44,7 +54,10 @@ public class Candidate {
 	 * 		Biden, J  Running for 2020 President
 	 */
 	public String toString() {
-		return String.format("%14s", lastName + ", " + firstName.charAt(0)) + "  " + String.format("%-30s", "Running for " + year + " " + office);
+		String result = "";
+		result += String.format("%16s", lastName + ", " + firstName.charAt(0));
+		result += String.format("%-30s", "Running for " + year + " " + office);
+		return result;
 	}
 
 	/***************************************************
@@ -97,5 +110,13 @@ public class Candidate {
 
 	public void setOfficeID(int officeID) {
 		this.officeID = officeID;
+	}
+
+	public int getVotes() {
+		return votes;
+	}
+
+	public void setVotes(int votes) {
+		this.votes = votes;
 	}
 }

@@ -2,3 +2,11 @@ Joe,Biden,0,0
 Donald,Trump,1,0
 Howie,Hawkins,2,0
 Jo,Jorgensen,3,0
+Steve,Jobs,4,1
+John,Bon,5,1
+Hodor,Hodor,6,1
+Morty,Forty,7,1
+Rick,Ricky,8,2
+Peter,Griffin,9,2
+Stewie,Griffin,10,2
+Micky,Mouse,11,2
