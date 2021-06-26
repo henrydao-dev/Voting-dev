@@ -14,8 +14,7 @@ import java.util.Collections;
 public class Report {
 	
 	private ArrayList<Candidate> ballot = new ArrayList<Candidate>();	// Holds all the Candidate information relevant to the given electionID
-	private ArrayList<Voter> voters = new ArrayList<Voter>();		// Holds all the registered Voter information
-	private ArrayList<Vote> votes = new ArrayList<Vote>();			// Holds all of the votes for the candidates on the ballot
+	private ArrayList<Voter> voters = new ArrayList<Voter>();			// Holds all the registered Voter information
 	private int electionID;							// Used in reporting the name of the election
 	private int numVoters;							// Used to report how many registered voters there are
 	private int voteCount;							// Used to report the numbers of votes placed in the given election
@@ -31,25 +30,11 @@ public class Report {
 	public Report(int electionID, ArrayList<Candidate> ballot, ArrayList<Vote> votes, ArrayList<Voter> voters) {
 		this.ballot = ballot;
 		this.voters = voters;
-		this.votes = votes;
 		this.electionID = electionID;
 		this.numVoters = voters.size();
 		candidates = ballot.size();
 		officeCount = votes.get(0).getVotes().length;
 		voteCount = votes.size();
-		tallyVotes();
-	}
-	
-	public void tallyVotes() {
-		for(int i = 0; i < votes.size(); i++) {
-			for(int j = 0; j < votes.get(0).getVotes().length; j++) {
-				for(int k = 0; k < ballot.size(); k++) {
-					if(ballot.get(k).getCandidateID() == votes.get(i).getVotes()[j]) {
-						ballot.get(k).addVote();
-					}
-				}
-			}
-		}
 	}
 	
 	/*
@@ -67,13 +52,11 @@ public class Report {
 	/*
 	 * Returns a string in this format:
 	 * 
-	 * 	First:		Last:		Office:		Votes:		Percentage:
-	 * 
-	 * 	John		Doe		President	10			52.0
-	 *  	Bob		Dob		President	9			48.0
-	 *  
-	 *  	Steve		Peve		Mayor		8			53.0
-	 *  	Ray		Day		Mayor		7			47.0
+	 * 	Running for President:        Votes:    Percent:
+	 *  Joe         Biden                 22        53.7
+	 *  Donald      Trump                 12        29.3
+	 *	Jo          Jorgensen              4         9.8
+	 *	Howie       Hawkins                3         7.3
 	 *  
 	 *  Copies the values in the votes ArrayList into another ArrayList and then sorts those votes. 
 	 *  Then loops through the the ballot n number of times (n being the number of offices being run
