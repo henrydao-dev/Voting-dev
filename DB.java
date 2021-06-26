@@ -8,14 +8,14 @@ import java.util.Scanner;
 
 public class DB
 {
-    private final int ELECTIONDATA = 5; 		// Number of data fields for a voter (ex: name,address,etc..)
-    private int numOffices; 				// Used when we need to know how many offices are being run for on a ballot
-    private int elections; 				// Number of ballots in the ballots directory
-    private int[] electionIDs; 				// Array of all electionIDs
-    private File[] ballotNames; 			// List of all the ballot names in the ballots directory
-    private File[] voteNames; 				// List of all the vote names in the votes directory
-    private ArrayList<Voter> voters; 			// Voter database
-    private ArrayList<ArrayList<Vote>> votes;		// All votes for all elections
+    private final int ELECTIONDATA = 5; 				// Number of data fields for a voter (ex: name,address,etc..)
+    private int numOffices; 							// Used when we need to know how many offices are being run for on a ballot
+    private int elections; 								// Number of ballots in the ballots directory
+    private int[] electionIDs; 							// Array of all electionIDs
+    private File[] ballotNames; 						// List of all the ballot names in the ballots directory
+    private File[] voteNames; 							// List of all the vote names in the votes directory
+    private ArrayList<Voter> voters; 					// Voter database
+    private ArrayList<ArrayList<Vote>> votes;			// All votes for all elections
     private ArrayList<ArrayList<Candidate>> ballots;	// All ballots for all elections
 
     Scanner sn;
@@ -35,10 +35,11 @@ public class DB
         loadVoters();
         loadAllVotes();
         numOffices = 0;
+        tallyVotes();
     }
 
     /***************************************************
-	*               Getter Methods                    *
+	 *               Getter Methods                    *
 	 ***************************************************/
 
     // Returns an ArrayList of Candidates who are running in a given election year.
@@ -126,6 +127,20 @@ public class DB
         }
         return output;
     }
+    
+    public void tallyVotes() {
+    	for(int x = 0; x < electionIDs.length; x++) {
+    		for(int i = 0; i < votes.get(x).size(); i++) {
+    			for(int j = 0; j < votes.get(x).get(0).getVotes().length; j++) {
+    				for(int k = 0; k < ballots.get(x).size(); k++) {
+    					if(ballots.get(x).get(k).getCandidateID() == votes.get(x).get(i).getVotes()[j]) {
+    						ballots.get(x).get(k).addVote();
+    					}
+    				}
+    			}
+    		}
+    	}
+	}
 
     // Fills the voters ArrayList with voters read in from voters.txt
     // First five fields are voter info, sixth is generated ID, any fields beyond that are added to an ArrayList of electionIDs.
@@ -236,8 +251,8 @@ public class DB
                     for (int j = 0; j < numOffices; j++)
                     {
                            temp[j] = Integer.parseInt(voteStrings.get(j));
-                           v.add(new Vote(ballotYear, temp));
                     }
+                    v.add(new Vote(ballotYear, temp));
                 }
             }
             catch (FileNotFoundException | NullPointerException e) {
