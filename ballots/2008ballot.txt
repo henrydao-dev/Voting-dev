@@ -1,5 +1,0 @@
-Barack,Obama,0,0
-John,McCain,1,0
-Ralph,Nader,2,0
-Bob,Barr,3,0
-Chuck,Baldwin,4,0

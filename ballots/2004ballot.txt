@@ -1,6 +1,0 @@
-George,Bush,0,0
-John,Kerry,1,0
-Michael,Badnarik,2,0
-Ralph,Nader,3,0
-Michael,Peroutka,4,0
-David,Cobb,5,0
