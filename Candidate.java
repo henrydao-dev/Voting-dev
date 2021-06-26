@@ -16,8 +16,8 @@ public class Candidate implements Comparable<Candidate> {
 	private String office;			// Name of the office the candidate is running for
 	private int officeID;			// Number used to identify the office the candidate is running for
 	private int candidateID;		// Number used in ####votes.txt to show the votes belongs to this candidate
-	private int year;			// Year(electionID) the candidate is running in an election
-	private int votes;			// Keeps track of how many votes this candidate has received
+	private int year;				// Year(electionID) the candidate is running in an election
+	private int votes;				// Keeps track of how many votes this candidate has received
 	
 	// default constructor not used
 	public Candidate() {}
@@ -28,13 +28,7 @@ public class Candidate implements Comparable<Candidate> {
 	public Candidate(String firstName, String lastName, int id, int office, int year) {
 		this.firstName = firstName;
 		this.lastName = lastName;
-		switch (office) {
-			case 0: this.office = "President"; break;
-			case 1: this.office = "House Rep"; break;
-			case 2: this.office = "Senate"; break;
-			case 3: this.office = "Mayor"; break;
-			default: this.office = "President"; break;
-		}
+		this.office = generateOffice(office);
 		this.officeID = office;
 		this.candidateID = id;
 		this.year = year;
@@ -57,6 +51,18 @@ public class Candidate implements Comparable<Candidate> {
 		String result = "";
 		result += String.format("%16s", lastName + ", " + firstName.charAt(0));
 		result += String.format("%-30s", "Running for " + year + " " + office);
+		return result;
+	}
+	
+	public String generateOffice(int o) {
+		String result = "";
+		switch (o) {
+			case 0: result = "President"; break;
+			case 1: result = "House Rep"; break;
+			case 2: result = "Senate"; break;
+			case 3: result = "Mayor"; break;
+			default: result = "President"; break;
+		}
 		return result;
 	}
 
