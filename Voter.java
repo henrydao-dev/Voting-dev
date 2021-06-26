@@ -88,13 +88,19 @@ public class Voter
 	public String toString()
     {
     	String result = "";
-    	result += String.format("%-12s", firstName);
-    	result += String.format("%-12s", lastName);
-    	result += String.format("%-4s", state) + "\n";
-    	if(elections.isEmpty())
-    		result += String.format("%-30s", "Elections participated in: [none]") + "\n\n";
-    	else
-    		result += String.format("%-30s", "Elections participated in: " + elections) + "\n\n";
+    	result += String.format("%-14s", firstName);
+    	result += String.format("%-14s", lastName);
+    	result += String.format("%12s", state) + "\n";
+    	if(elections.isEmpty()) {
+    		result += String.format("%-28s", "Elections participated in:");
+    		result += String.format("%20s", "[none]") + "\n";
+    	}
+    	else {
+    		result += String.format("%-28s", "Elections participated in:");
+    		result += String.format("%20s", elections) + "\n";
+    	}
+    	result += String.format("%-24s", "Voter ID:");
+    	result += String.format("%20s", id);
         return result;
     }
 }
