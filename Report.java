@@ -37,6 +37,11 @@ public class Report {
 		voteCount = votes.size();
 	}
 	
+	public Report(ArrayList<Voter> voters) {
+		this.voters = voters;
+		this.numVoters = voters.size();
+	}
+	
 	/*
 	 * A "report everything" method
 	 * Will generate a large formated string of everything related to the given election.
@@ -161,7 +166,7 @@ public class Report {
 		}
 		else {
 			for(Voter v: voters) {
-				result += String.format("%-30s", v.toString());
+				result += v.toString();
 			}
 		}
 		return result;
