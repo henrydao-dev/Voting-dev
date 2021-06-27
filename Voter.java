@@ -72,6 +72,11 @@ public class Voter
         return state;
     }
     
+    public ArrayList<Integer> getElection()
+    {
+        return elections;
+    }
+    
     public void addElection(int id)
     {
         elections.add(id);
@@ -100,7 +105,7 @@ public class Voter
     		result += String.format("%20s", elections) + "\n";
     	}
     	result += String.format("%-24s", "Voter ID:");
-    	result += String.format("%20s", id);
+    	result += String.format("%20s", id) + "\n";
         return result;
     }
 }
