@@ -133,7 +133,7 @@ public class DB
              writer.close();
         }
         catch (IOException ex) {
-             // Handle me
+             System.out.println("File not found.");
         }
     }
 
@@ -153,6 +153,31 @@ public class DB
     // Saves votes for each ballot year to each respective votes.txt file
     public void writeVotes()
     {
+        for (ArrayList<Vote> v : votes)
+        {
+            // Get next Vote
+            int id = v.get(0).getElectionID();
+            String filename = "votes/" + String.valueOf(id) + "votes.txt";
+            System.out.println("Opening " + filename);
+            // Open corresponding votes text file
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(new File(filename))))
+            {
+                for (int i = 0, n = v.size(); i < n; i++)
+                {
+                    int[] myVotes = v.get(i).getVotes();
+                    for (int j = 0; j < myVotes.length - 1; j++)
+                    {
+                        writer.write(myVotes[j] + ",");
+                    }
+                    writer.write(myVotes[myVotes.length - 1] + "\n");
+                }
+                writer.close();
+            }
+            catch (IOException ex) {
+                System.out.println("File not found.");
+            }
+        }
+
 
     }
 
