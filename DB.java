@@ -15,6 +15,7 @@ public class DB
     private File[] ballotNames; 						// List of all the ballot names in the ballots directory
     private File[] voteNames; 							// List of all the vote names in the votes directory
     private ArrayList<Voter> voters; 					// Voter database
+    private ArrayList<Admin> admin; 					// All admin login information
     private ArrayList<ArrayList<Vote>> votes;			// All votes for all elections
     private ArrayList<ArrayList<Candidate>> ballots;	// All ballots for all elections
 
@@ -30,10 +31,12 @@ public class DB
         ballots = new ArrayList<ArrayList<Candidate>>();
         voters = new ArrayList<Voter>();
         votes = new ArrayList<ArrayList<Vote>>();
+        admin = new ArrayList<Admin>();
         electionIDs = new int[countBallots()];
         loadAllBallots();
         loadVoters();
         loadAllVotes();
+        loadAdmin();
         numOffices = 0;
         tallyVotes();
     }
@@ -69,6 +72,11 @@ public class DB
         return null;
     }
     
+    public ArrayList<Admin> getAdmin() 
+    {
+    	return admin;
+    }
+    
     public int[] getElectionIDs() 
     {
     	return electionIDs;
@@ -89,8 +97,10 @@ public class DB
     {
         for(int i = 0; i < voters.size(); i++)
         {
-        	if(voters.get(i).getID() == voterID)
+        	if(voters.get(i).getID() == voterID) {
         		voters.get(i).addElection(electionID);
+        		break;
+        	}
         }
     }
 
@@ -260,6 +270,28 @@ public class DB
                 System.out.println("Check directory or ####votes.txt files.");
             }
             votes.add(v);
+        }
+    }
+    
+    // Loads all admin information from the admin.txt file in the admin directory
+    public void loadAdmin() {
+    	try
+        {
+            sn = new Scanner(new File("admin/admin.txt"));
+            ArrayList<String> loginInfo = new ArrayList<String>();
+            while (sn.hasNextLine())
+            {
+            	loginInfo.add(sn.nextLine());
+            }
+            ArrayList<String> temp = new ArrayList<String>();
+            for(String s: loginInfo) {
+            	temp = getRecordFromLine(s);
+            	admin.add(new Admin(temp.get(0), temp.get(1)));
+            }
+        }
+        catch (FileNotFoundException e)
+        {
+            System.out.println("File not found! Make sure that admin.txt is in admin folder");
         }
     }
 
