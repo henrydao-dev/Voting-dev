@@ -1,9 +1,12 @@
 // DB.java
-// @author Douglas Kiang
+// @author Eric Barrow, Douglas Kiang
 
 import java.util.ArrayList;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class DB
@@ -71,13 +74,13 @@ public class DB
     	}
         return null;
     }
-    
-    public ArrayList<Admin> getAdmin() 
+
+    public ArrayList<Admin> getAdmin()
     {
     	return admin;
     }
-    
-    public int[] getElectionIDs() 
+
+    public int[] getElectionIDs()
     {
     	return electionIDs;
     }
@@ -104,11 +107,41 @@ public class DB
         }
     }
 
+    // Writes voters database to voters.txt
+    public void writeVoters() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(new File("voters/voters.txt")))) {
+            for (Voter v : voters) {
+                writer.write(v.getFirstName() + ",");
+                writer.write(v.getLastName() + ",");
+                writer.write(v.getAddress() + ",");
+                writer.write(v.getCity() + ",");
+                int size = v.getElection().size();
+                if (size <= 0)
+                {
+                    writer.write(v.getState() + "\n");
+                }
+                else
+                {
+                    writer.write(v.getState() + ",");
+                    for (int i = 0, n = size - 1; i < n; i++)
+                    {
+                        writer.write(v.getElection().get(i) + ",");
+                    }
+                    writer.write(v.getElection().get(size - 1) + "\n");
+                }
+             }
+             writer.close();
+        }
+        catch (IOException ex) {
+             // Handle me
+        }
+    }
+
     // Adds a Vote to the votes database.
     // Loops through all elections until it finds a match on electionID, then adds the vote to that election.
     public void addVote(Vote vote)
     {
-        for(int i = 0; i < votes.size(); i++) 
+        for(int i = 0; i < votes.size(); i++)
         {
         	if(votes.get(i).get(0).getElectionID() == vote.getElectionID())
         	{
@@ -117,10 +150,16 @@ public class DB
         }
     }
 
+    // Saves votes for each ballot year to each respective votes.txt file
+    public void writeVotes()
+    {
+
+    }
+
     /***************************************************
 	 *               Helper Methods                    *
 	 ***************************************************/
-    
+
     // Returns the number of files in the current directory that
     // end in "ballot.txt". Should be equivalent to the number of elections.
     private int countBallots()
@@ -137,7 +176,7 @@ public class DB
         }
         return output;
     }
-    
+
     public void tallyVotes() {
     	for(int x = 0; x < electionIDs.length; x++) {
     		for(int i = 0; i < votes.get(x).size(); i++) {
@@ -272,7 +311,7 @@ public class DB
             votes.add(v);
         }
     }
-    
+
     // Loads all admin information from the admin.txt file in the admin directory
     public void loadAdmin() {
     	try
