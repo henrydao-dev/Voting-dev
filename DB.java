@@ -11,16 +11,16 @@ import java.util.Scanner;
 
 public class DB
 {
-    private final int ELECTIONDATA = 5; 				// Number of data fields for a voter (ex: name,address,etc..)
-    private int numOffices; 							// Used when we need to know how many offices are being run for on a ballot
-    private int elections; 								// Number of ballots in the ballots directory
-    private int[] electionIDs; 							// Array of all electionIDs
-    private File[] ballotNames; 						// List of all the ballot names in the ballots directory
-    private File[] voteNames; 							// List of all the vote names in the votes directory
-    private ArrayList<Voter> voters; 					// Voter database
-    private ArrayList<Admin> admin; 					// All admin login information
+    private final int ELECTIONDATA = 5; 			// Number of data fields for a voter (ex: name,address,etc..)
+    private int numOffices; 					// Used when we need to know how many offices are being run for on a ballot
+    private int elections; 					// Number of ballots in the ballots directory
+    private int[] electionIDs; 					// Array of all electionIDs
+    private File[] ballotNames; 				// List of all the ballot names in the ballots directory
+    private File[] voteNames; 					// List of all the vote names in the votes directory
+    private ArrayList<Voter> voters; 				// Voter database
+    private ArrayList<Admin> admin; 				// All admin login information
     private ArrayList<ArrayList<Vote>> votes;			// All votes for all elections
-    private ArrayList<ArrayList<Candidate>> ballots;	// All ballots for all elections
+    private ArrayList<ArrayList<Candidate>> ballots;		// All ballots for all elections
 
     Scanner sn;
 
@@ -158,7 +158,6 @@ public class DB
             // Get next Vote
             int id = v.get(0).getElectionID();
             String filename = "votes/" + String.valueOf(id) + "votes.txt";
-            System.out.println("Opening " + filename);
             // Open corresponding votes text file
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(new File(filename))))
             {

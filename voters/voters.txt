@@ -6,7 +6,7 @@ Keegan,York,9288 Non Road,Mexicali,AL
 Igor,Rios,5213 Sapien Street,Cabano,AK
 Vaughan,Rich,216 Proin Road,Detroit,MI
 Jacob,Garrett,8239 Velit Street,Punitaqui,IL
-Eric,Barrow,111 Park Ave,Beaumont,TX
+Eric,Barrow,111 Park Ave,Beaumont,TX,2020
 Aaron,Barrow,112 Park Ave,Beaumont,TX
 Douglas, Kiang,311 Park Ave,Honolulu,HI
 Adetola, Olukoya,511 Park Ave,Beaumont,TX

@@ -6,14 +6,15 @@ import java.util.ArrayList;
 
 public class Voter
 {
-    private String firstName;
-    private String lastName;
-    private String address;
-    private String city;
-    private String state;
-    private int id;
-    private ArrayList<Integer> elections;
+    private String firstName;			// first name of voter
+    private String lastName;			// last name of voter
+    private String address;			// address of voter
+    private String city;			// city of voter
+    private String state;			// state of voter
+    private int id;				// unique id generated from name, address, city, state
+    private ArrayList<Integer> elections;	// elections that the voter has participated in
     
+    // arg constructor used to generate a new voter in the system
     public Voter(String first, String last, String address, String city, String state)
     {
         firstName = first;
@@ -25,6 +26,7 @@ public class Voter
         elections = new ArrayList<Integer>();
     }
     
+    // arg constructor to add a voter, that has participated in previous elections, into the system
     public Voter(String first, String last, String address, String city, String state, ArrayList<Integer> elections)
     {
         this(first,last,address,city,state);
@@ -34,7 +36,7 @@ public class Voter
         }
     }
     
- // Generates a unique Voter ID (hash) based on the voter's name and address
+    // Generates a unique Voter ID (hash) based on the voter's name and address
     // Hash will always be the same given the same name and address
     private int generateID()
     {
@@ -46,6 +48,10 @@ public class Voter
         }
         return hash;
     }
+    
+	/***************************************************
+	 *               Getters and Setters               *
+	 ***************************************************/
     
     public String getFirstName()
     {
@@ -90,6 +96,9 @@ public class Voter
 		this.id = id;
 	}
 
+	/*
+	 * To string method used to print out a formatted string of the voter information
+	 */
 	public String toString()
     {
     	String result = "";

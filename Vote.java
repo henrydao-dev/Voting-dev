@@ -6,8 +6,8 @@ import java.util.Arrays;
 
 public class Vote {
 
-	private int electionID;
-	private int[] votes;
+	private int electionID;		// stores which election this vote object belongs to
+	private int[] votes;		// stores all votes cast on the ballot
 
 	// default constructor not used
 	public Vote() {}

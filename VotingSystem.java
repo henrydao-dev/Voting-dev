@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 
-public class test {
+public class VotingSystem {
 	
 	/*
 	 * Main method will create DB and Report objects to bring in all of the 
@@ -23,7 +23,9 @@ public class test {
 		Scanner sn = new Scanner(System.in);
 		homeScreen(db, sn);
 		sn.close();
-		// This is where methods would be called to save election progress to txt files.
+		db.writeVoters();
+		db.writeVotes();
+		System.out.println("\nElection progress saved.");
 	}	
 	
 	/*
@@ -132,7 +134,7 @@ public class test {
 			if(v.getID() == id) {
 				for(int i: v.getElection()) {
 					if(givenNumber == i) {
-						System.out.println("You have already voted in that election.");
+						System.out.println("\nYou have already voted in that election.");
 						counter++;
 					}
 				}

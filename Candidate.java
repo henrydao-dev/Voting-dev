@@ -16,8 +16,8 @@ public class Candidate implements Comparable<Candidate> {
 	private String office;			// Name of the office the candidate is running for
 	private int officeID;			// Number used to identify the office the candidate is running for
 	private int candidateID;		// Number used in ####votes.txt to show the votes belongs to this candidate
-	private int year;				// Year(electionID) the candidate is running in an election
-	private int votes;				// Keeps track of how many votes this candidate has received
+	private int year;			// Year(electionID) the candidate is running in an election
+	private int votes;			// Keeps track of how many votes this candidate has received
 	
 	// default constructor not used
 	public Candidate() {}
@@ -35,10 +35,12 @@ public class Candidate implements Comparable<Candidate> {
 		this.votes = 0;
 	}
 	
+	// method is called when a vote is counted for this candidate, increments the vote variable
 	public void addVote() {
 		votes++;
 	}
 	
+	// used to sort the candidates by how many votes they have
 	public int compareTo(Candidate c) {
 		return this.votes - c.votes;
 	}
@@ -54,6 +56,7 @@ public class Candidate implements Comparable<Candidate> {
 		return result;
 	}
 	
+	// used to convert the number from the txt file to the name of the office the candidate belongs to on the ballot
 	public String generateOffice(int o) {
 		String result = "";
 		switch (o) {

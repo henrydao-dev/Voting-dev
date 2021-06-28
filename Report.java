@@ -14,7 +14,7 @@ import java.util.Collections;
 public class Report {
 	
 	private ArrayList<Candidate> ballot = new ArrayList<Candidate>();	// Holds all the Candidate information relevant to the given electionID
-	private ArrayList<Voter> voters = new ArrayList<Voter>();			// Holds all the registered Voter information
+	private ArrayList<Voter> voters = new ArrayList<Voter>();		// Holds all the registered Voter information
 	private int electionID;							// Used in reporting the name of the election
 	private int numVoters;							// Used to report how many registered voters there are
 	private int voteCount;							// Used to report the numbers of votes placed in the given election
@@ -71,8 +71,8 @@ public class Report {
 	 * Returns a string in this format:
 	 * 
 	 * 	Running for President:        Votes:    Percent:
-	 *  Joe         Biden                 22        53.7
-	 *  Donald      Trump                 12        29.3
+	 *  	Joe         Biden                 22        53.7
+	 *  	Donald      Trump                 12        29.3
 	 *	Jo          Jorgensen              4         9.8
 	 *	Howie       Hawkins                3         7.3
 	 *  
@@ -221,12 +221,12 @@ public class Report {
 			}
 		}
 		if(count == voteCount) {
-			result += "\t" + "The number of voters that have participated in the election matches the number of votes counted.\n";
+			result += "\t" + "The number of voters that have participated in the election match the number of votes counted.\n";
 			result += "\t" + "Election results have been validated.";
 		}
 		else {
-			result += "\t" + "The number of voters that have participated in the election does not matches the number of votes counted.\n";
-			result += "\t" + "Election results have not been validated.";
+			result += "\t" + "The number of voters that have participated in the election does not match the number of votes counted.\n";
+			result += "\t" + "Election results are not valid.";
 		}
 		return result;
 	}
