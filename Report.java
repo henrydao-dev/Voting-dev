@@ -25,7 +25,7 @@ public class Report {
 	public Report() {}
 	
 	/*
-	 * Argument constructor used in setting/initializing the values of all the variables for the object.
+	 * Constructor used when trying to create reports on election results or ballot information.
 	 */
 	public Report(int electionID, ArrayList<Candidate> ballot, ArrayList<Vote> votes, ArrayList<Voter> voters) {
 		this.ballot = ballot;
@@ -37,9 +37,22 @@ public class Report {
 		voteCount = votes.size();
 	}
 	
+	/*
+	 * Constructor used when trying to create reports on voter information.
+	 */
 	public Report(ArrayList<Voter> voters) {
 		this.voters = voters;
 		this.numVoters = voters.size();
+	}
+	
+	/*
+	 * Constructor used when trying to validate election votes.
+	 */
+	public Report(ArrayList<Voter> voters, ArrayList<Vote> votes, int electionID) {
+		this.voters = voters;
+		this.numVoters = voters.size();
+		this.electionID = electionID;
+		voteCount = votes.size();
 	}
 	
 	/*
@@ -69,7 +82,7 @@ public class Report {
 	 *  to least votes to the string that will be returned by the method.
 	 */
 	public String ballotReport() {
-		String office = "";		
+		String office = "\n";		
 		String result = "Displaying ballot for the year of " + electionID + ":\n\n";
 		
 		for(int i = 0; i < officeCount; i++) {
@@ -81,9 +94,9 @@ public class Report {
 				case 3: office = "Mayor"; break;
 				default: office = "President"; break;
 			}
-			result += String.format("%-24s", "Running for " + office + ":");
-			result += String.format("%12s", "Votes:");
-			result += String.format("%12s", "Percent:") + "\n";
+			result += "\t" + String.format("%-24s", "Running for " + office + ":");
+			result += "\t" + String.format("%12s", "Votes:");
+			result += "\t" + String.format("%12s", "Percent:") + "\n";
 			
 			for(int j = 0; j < ballot.size(); j++) {
 				if(ballot.get(j).getOfficeID() == i) {
@@ -92,10 +105,10 @@ public class Report {
 			}
 			Collections.sort(sortedVotes);
 			for(int j = sortedVotes.size() - 1; j >= 0; j--) {
-				result += String.format("%-12s", sortedVotes.get(j).getFirstName());
-				result += String.format("%-12s", sortedVotes.get(j).getLastName());
-				result += String.format("%12s", sortedVotes.get(j).getVotes());
-				result += String.format("%12.1f", calcPercentage(sortedVotes.get(j), sortedVotes)) + "\n";
+				result += "\t" + String.format("%-12s", sortedVotes.get(j).getFirstName());
+				result += "\t" + String.format("%-12s", sortedVotes.get(j).getLastName());
+				result += "\t" + String.format("%12s", sortedVotes.get(j).getVotes());
+				result += "\t" + String.format("%12.1f", calcPercentage(sortedVotes.get(j), sortedVotes)) + "\n";
 			}
 			result += "\n";
 		}
@@ -108,17 +121,17 @@ public class Report {
 	 * Similar format as ballotReport method.
 	 */
 	public String ballot() {
-		String result = "Displaying ballot for the year of " + electionID + ":\n\n";
-		result += String.format("%-12s", "First:");
-		result += String.format("%-12s", "Last:");
-		result += String.format("%-20s", "Office running for:");
+		String result = "\n\t" + "Displaying ballot for the year of " + electionID + ":\n\n";
+		result += "\t" + String.format("%-12s", "First:");
+		result += "\t" + String.format("%-12s", "Last:");
+		result += "\t" + String.format("%-20s", "Office running for:");
 		result += "\n\n";
 		for(int i = 0; i < officeCount; i++) {
 			for(int j = 0; j < candidates; j++) {
 				if(ballot.get(j).getOfficeID() == i) {
-					result += String.format("%-12s", ballot.get(j).getFirstName());
-					result += String.format("%-12s", ballot.get(j).getLastName());
-					result += String.format("%-20s", ballot.get(j).getOffice());
+					result += "\t" + String.format("%-12s", ballot.get(j).getFirstName());
+					result += "\t" + String.format("%-12s", ballot.get(j).getLastName());
+					result += "\t" + String.format("%-20s", ballot.get(j).getOffice());
 					result += "\n";
 				}
 			}
@@ -132,11 +145,11 @@ public class Report {
 	 * to display information about the voter turnout and then returns it.
 	 */
 	public String participationReport() {
-		String result = "";
+		String result = "\n";
 		double participation = ((double)voteCount/numVoters) * 100;		
-		result += String.format("%-35s", "Number of registered voters: ") + String.format("%10s", numVoters) + "\n";
-		result += String.format("%-35s", "Number of votes placed: ") + String.format("%10s", voteCount) + "\n";
-		result += String.format("%-35s", "Percent participation: ") + String.format("%10.1f", participation) + "\n";
+		result += "\t" + String.format("%-35s", "Number of registered voters: ") + String.format("%10s", numVoters) + "\n";
+		result += "\t" + String.format("%-35s", "Number of votes placed: ") + String.format("%10s", voteCount) + "\n";
+		result += "\t" + String.format("%-35s", "Percent participation: ") + String.format("%10.1f", participation) + "\n";
 		return result;
 	}
 	
@@ -166,7 +179,7 @@ public class Report {
 		}
 		else {
 			for(Voter v: voters) {
-				result += v.toString();
+				result += v.toString() + "\n";
 			}
 		}
 		return result;
@@ -195,6 +208,27 @@ public class Report {
 			result = "No registered voters in " + state;
 			return result;
 		}
+	}
+	
+	public String validateVotes() {
+		String result = "\n";
+		int count = 0;
+		for(Voter v: voters) {
+			for(int election: v.getElection()) {
+				if(election == electionID) {
+					count++;
+				}
+			}
+		}
+		if(count == voteCount) {
+			result += "\t" + "The number of voters that have participated in the election matches the number of votes counted.\n";
+			result += "\t" + "Election results have been validated.";
+		}
+		else {
+			result += "\t" + "The number of voters that have participated in the election does not matches the number of votes counted.\n";
+			result += "\t" + "Election results have not been validated.";
+		}
+		return result;
 	}
 
 	/***************************************************
