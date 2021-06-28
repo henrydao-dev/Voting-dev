@@ -35,7 +35,7 @@ public class test {
 		int exit = 0;				// used to exit the program
 		String givenString = "";	// used to store user input, which is then used to "change screens"
 		while(exit == 0) {
-			for(int i = 0; i < 10; i++) {
+			for(int i = 0; i < 5; i++) {
 				System.out.println();
 			}
 			System.out.print("Enter 'vote' to place a vote, 'admin' for admin options, or 'exit' to exit: ");
@@ -62,7 +62,7 @@ public class test {
 		String adminID = "";		// used to verify valid admin login information is entered
 		String password = "";		// used to verify valid admin login information is entered
 		
-		for(int i = 0; i < 10; i++) {
+		for(int i = 0; i < 5; i++) {
 			System.out.println();
 		}
 		// brings user to vote screen if requirements met
@@ -116,7 +116,7 @@ public class test {
 		int givenNumber = 0;						// used to store the year election to participate in
 		int[] ballots = db.getElectionIDs();		// used to print out the ballots to choose from
 		
-		for(int i = 0; i < 10; i++) {
+		for(int i = 0; i < 5; i++) {
 			System.out.println();
 		}
 		/*
@@ -139,6 +139,7 @@ public class test {
 			}
 		}
 		if(counter == 0) {
+			System.out.println("\n");
 			Set<Integer> numOffices = new HashSet<Integer>();	// used to store the officeIDs of all offices on the ballot so correct text can be displayed
 			for(Candidate c: db.getBallot(givenNumber)) {
 				numOffices.add(c.getOfficeID());
@@ -152,19 +153,19 @@ public class test {
 			for(int office: numOffices) {
 				exiter = 0;
 				ArrayList<Integer> ids = new ArrayList<Integer>();
-				System.out.print(String.format("%-30s", "Running for " + db.getBallot(givenNumber).get(0).generateOffice(office) + ":"));
-				System.out.print(String.format("%25s", "Candidate ID:") + "\n");
+				System.out.print("\t" + String.format("%-30s", "Running for " + db.getBallot(givenNumber).get(0).generateOffice(office) + ":"));
+				System.out.print("\t" + String.format("%25s", "Candidate ID:") + "\n");
 				for(int j = 0; j < db.getBallot(givenNumber).size(); j++) {
 					Candidate c = db.getBallot(givenNumber).get(j);
 					if(c.getOfficeID() == office) {
-						System.out.print(String.format("%-15s", c.getFirstName()));
-						System.out.print(String.format("%-15s", c.getLastName()));
-						System.out.print(String.format("%25s", c.getCandidateID()) + "\n");
+						System.out.print("\t" + String.format("%-15s", c.getFirstName()));
+						System.out.print("\t" + String.format("%-15s", c.getLastName()));
+						System.out.print("\t" + String.format("%25s", c.getCandidateID()) + "\n");
 						ids.add(c.getCandidateID());
 					}
 				}
 				while(exiter == 0) {
-					System.out.print("Enter Candidate ID that you want to vote for: ");
+					System.out.print("\tEnter Candidate ID that you want to vote for: ");
 					votes[count] = sn.nextInt();
 					for(int i: ids) {
 						if(i == votes[count]) {
@@ -173,7 +174,7 @@ public class test {
 						}
 					}
 					if(exiter == 0) 
-						System.out.println("That is not a valid Candidate ID for this office.");
+						System.out.println("\tThat is not a valid Candidate ID for this office.");
 				}
 				System.out.print("\n");
 				count++;
@@ -205,12 +206,13 @@ public class test {
 		String givenString = "";
 		
 		while(exit == 0) {
-			for(int i = 0; i < 10; i++) {
+			for(int i = 0; i < 5; i++) {
 				System.out.println();
 			}
 			System.out.println("\t Type 'voter' if you want to see voter information.");
 			System.out.println("\t Type 'reports' if you want to see ballot information.");
 			System.out.println("\t Type 'register' if you want to register a voter");
+			System.out.println("\t Type 'validate' if you want to validate votes");
 			System.out.println("\t Type 'exit' if you want to return to previous options.");
 			System.out.print("\nWhat action do you want to perform: ");
 			givenString = sn.next();
@@ -227,6 +229,10 @@ public class test {
 				// Tests the general reports
 				case "register": 
 					registerVoterScreen(db,sn);
+					break;
+					// Tests the general reports
+				case "validate": 
+					validationScreen(db,sn);
 					break;
 				// Exits the loop, to either close the program or return to main screen options
 				case "exit": 
@@ -250,18 +256,15 @@ public class test {
 		int id = 0;		// used to see if the voter already exists in the system
 		String[] voterInfo = new String[5];		// used to store user input about voter info, and also used for verification
 		
-		for(int i = 0; i < 10; i++) {
-			System.out.println();
-		}
-		System.out.print("Enter first name: ");
+		System.out.print("\tEnter first name: ");
 		voterInfo[0] = sn.next();
-		System.out.print("Enter last name: ");
+		System.out.print("\tEnter last name: ");
 		voterInfo[1] = sn.next();
-		System.out.println("Enter street address: ");
+		System.out.print("\tEnter street address: ");
 		voterInfo[2] = getInput();
-		System.out.println("Enter city: ");
+		System.out.print("\tEnter city: ");
 		voterInfo[3] = getInput();
-		System.out.print("Enter state: ");
+		System.out.print("\tEnter state: ");
 		voterInfo[4] = sn.next();
 		id = generateID(voterInfo[0],voterInfo[1],voterInfo[2],voterInfo[3],voterInfo[4]);
 		int counter = 0;
@@ -275,7 +278,8 @@ public class test {
 		if (counter == 0) {
 			Voter v = new Voter(voterInfo[0],voterInfo[1],voterInfo[2],voterInfo[3],voterInfo[4]);
 			db.addVoter(v);
-			System.out.println(v.toString());
+			System.out.println("\nVoter has successfully been registered.");
+			System.out.println("\n" + v.toString());
 		}
 	}
 	
@@ -289,7 +293,7 @@ public class test {
 		int givenNumber = 0;		// used to store which year ballot to be looking for
 		int[] ballots = db.getElectionIDs();		// used to print out the ballots to choose from
 		
-		for(int i = 0; i < 10; i++) {
+		for(int i = 0; i < 5; i++) {
 			System.out.println();
 		}
 		// Loop that continues to ask for the year election that you want to view until you give a valid year
@@ -313,7 +317,7 @@ public class test {
 		Report r = new Report(givenNumber, db.getBallot(givenNumber), db.getVotes(givenNumber), db.getVoters());
 		// loop that continues to ask what kind of report you want until you enter 'exit'
 		while(exit == 0) {
-			for(int i = 0; i < 10; i++) {
+			for(int i = 0; i < 5; i++) {
 				System.out.println();
 			}
 			System.out.println("\t Type 'ballot' if you want to see ballot information.");
@@ -351,11 +355,12 @@ public class test {
 		String givenString = "";				// used in searching the list of voters to find a match in given information
 		Report r = new Report(db.getVoters());	// report generated with a list of all voters, used to print formatted strings of voters out
 		
-		for(int i = 0; i < 10; i++) {
+		for(int i = 0; i < 5; i++) {
 			System.out.println();
 		}
 		System.out.print("Enter last name of voter you want to look up, or enter 'all' to see all voter information: ");
 		givenString = sn.next();
+		System.out.println("");
 		if (givenString.equals("all"))
 			System.out.println(r.reportVoters());
 		else {
@@ -363,6 +368,7 @@ public class test {
 			int counter = 0;
 			for(Voter v: db.getVoters()) {
 				if(name[0].equalsIgnoreCase(v.getLastName())) {
+					System.out.println("");
 					System.out.println(v.toString());
 					counter++;
 				}
@@ -370,6 +376,40 @@ public class test {
 			if(counter == 0)
 				System.out.println("No voters with that name.");
 		}
+	}
+	
+	/*
+	 * Will prompt the user to select from a list of active ballots to validate. Will then print out a formatted string,
+	 * displaying if all votes are valid or if there is a discrepancy in votes to voter records.
+	 */
+	public static void validationScreen(DB db, Scanner sn) {
+		int exit = 0;				// used to exit the screen
+		int givenNumber = 0;		// used to store which year ballot to validate
+		int[] ballots = db.getElectionIDs();		// used to print out the ballots to choose from
+		
+		for(int i = 0; i < 5; i++) {
+			System.out.println();
+		}
+		// Loop that continues to ask for the year election that you want to view until you give a valid year
+		while(exit == 0) {
+			System.out.println("Available ballots: ");
+			for(int i = 0; i < ballots.length; i++) {
+				System.out.print("\t" + ballots[i]);
+			}
+			System.out.print("\nWhat year ballot do you want to validate? ");
+			givenNumber = sn.nextInt();
+			for(int year: db.getElectionIDs()) {
+				// If the given year is valid, exit loop and go to next menu
+				if(givenNumber == year) {
+					exit++;
+				}
+			}
+			if(exit == 0)
+				System.out.println("No election information for that year.");
+		}
+		// Creates a report object that is passed voter and vote information so that votes can be validated, then prints out results.
+		Report r = new Report(db.getVoters(), db.getVotes(givenNumber), givenNumber);
+		System.out.println(r.validateVotes());
 	}
 	
 	/*
