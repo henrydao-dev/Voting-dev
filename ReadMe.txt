@@ -1,15 +1,14 @@
-# Voting-dev
-##A Simulated Voting System##
+A Simulated Voting System
 
 The purpose of this application is to simulate a voting system in the United States.
 
-### Requirements ###
+Requirements
 You will need Java 7 or later installed to compile and run this project.
 
-### Installation ###
+Installation
 The project is run from the command line. Download all files to the same directory, being sure to maintain the sub-directories `admin`, `ballots`, `/voter`, `/votes` and their included text files. Make sure that read-write permissions are enabled for those sub-directories.
 
 All `.java` files are already compiled; however, you may re-compile the code by executing `javac *.java`.
 
-### Running the Program ###
+Running the Program
 To run the project, execute the following code from the command line: `java VotingSystem`.
